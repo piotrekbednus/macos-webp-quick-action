@@ -27,8 +27,8 @@ uploaded to an online converter.
 You need [Homebrew](https://brew.sh).
 
 ```bash
-git clone https://github.com/piotrekbednus/macos-webp-avif-quick-actions.git
-cd macos-webp-avif-quick-actions
+git clone https://github.com/piotrekbednus/macos-webp-quick-action.git
+cd macos-webp-quick-action
 ./install.sh
 ```
 
