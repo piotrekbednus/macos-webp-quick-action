@@ -3,6 +3,10 @@
 Right-click any image in Finder, choose **Quick Actions → Convert to WebP** (or
 **Convert to AVIF**), and a compressed copy appears next to the original.
 
+![Finder's Quick Actions menu showing Convert to AVIF and Convert to WebP](docs/finder-quick-actions.webp)
+
+*This screenshot was converted with the action itself: 445 KB as PNG, 33 KB as WebP.*
+
 macOS can convert images to JPEG, PNG and HEIF from Finder, but not to WebP or
 AVIF. These two Quick Actions fill that gap. They run locally, so nothing is
 uploaded to an online converter.
