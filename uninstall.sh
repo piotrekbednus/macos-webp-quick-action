@@ -15,4 +15,9 @@ for name in "Convert to WebP.workflow" "Convert to AVIF.workflow"; do
 done
 
 /System/Library/CoreServices/pbs -flush
+
+if [ -e "/Library/Services/Convert to WebP.workflow" ] || [ -e "/Library/Services/Convert to AVIF.workflow" ]; then
+  echo "The installer (.pkg) version is installed too. To remove it, run:"
+  echo "  open \"/Library/Application Support/WebP AVIF Quick Actions/Uninstall.command\""
+fi
 exit $failed

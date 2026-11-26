@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+    <title>WebP &amp; AVIF Quick Actions</title>
+    <welcome file="welcome.html" mime-type="text/html"/>
+    <conclusion file="conclusion.html" mime-type="text/html"/>
+    <options customize="never" require-scripts="false" hostArchitectures="arm64,x86_64"/>
+    <domains enable_localSystem="true" enable_anywhere="false" enable_currentUserHome="false"/>
+    <volume-check>
+        <allowed-os-versions><os-version min="11.0"/></allowed-os-versions>
+    </volume-check>
+    <choices-outline>
+        <line choice="default"><line choice="quick-actions"/></line>
+    </choices-outline>
+    <choice id="default"/>
+    <choice id="quick-actions" visible="false">
+        <pkg-ref id="com.automateyourstuff.webp-avif-quick-actions"/>
+    </choice>
+    <pkg-ref id="com.automateyourstuff.webp-avif-quick-actions" version="@VERSION@" onConclusion="none">component.pkg</pkg-ref>
+</installer-gui-script>

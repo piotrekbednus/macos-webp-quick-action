@@ -5,12 +5,14 @@
 QUALITY=70   # 0-100 on libavif's scale (not the same scale as WebP).
 SPEED=6      # 0 = slowest/smallest, 10 = fastest.
 
-export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+# The installer (.pkg) puts its own encoders here; the install.sh route uses
+# Homebrew's.
+export PATH="/Library/Application Support/WebP AVIF Quick Actions/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 notify() { osascript -e "display notification \"$1\" with title \"Convert to AVIF\""; }
 
 if ! command -v avifenc >/dev/null 2>&1; then
-  notify "avifenc not found. Run: brew install libavif"
+  notify "avifenc not found. Reinstall from github.com/piotrekbednus/macos-webp-quick-action"
   exit 1
 fi
 

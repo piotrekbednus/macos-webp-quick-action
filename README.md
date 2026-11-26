@@ -28,17 +28,42 @@ uploaded to an online converter.
 
 ## Install
 
-You need [Homebrew](https://brew.sh).
+**[Download the installer (.pkg)](https://github.com/piotrekbednus/macos-webp-quick-action/releases/latest/download/WebP-AVIF-Quick-Actions.pkg)**,
+open it and follow the steps. You need macOS 11 or later, on Apple Silicon or Intel. The installer
+includes the encoders, so you do not need Homebrew.
+
+The installer is not signed with an Apple Developer ID yet, so the first time
+macOS says it cannot verify it:
+
+1. Click **Done**, not Move to Bin (Move to Trash on some Macs).
+
+   <img src="docs/install-1-not-opened.webp" width="320" alt="macOS dialog: WebP-AVIF-Quick-Actions.pkg Not Opened, with Done and Move to Bin buttons">
+
+2. Open **System Settings → Privacy & Security** and scroll down to Security.
+   Next to “WebP-AVIF-Quick-Actions.pkg” was blocked to protect your Mac,
+   click **Open Anyway**. The button stays there for about an hour after you
+   tried to open the file.
+
+   <img src="docs/install-2-open-anyway.webp" width="600" alt="System Settings, Privacy and Security: WebP-AVIF-Quick-Actions.pkg was blocked to protect your Mac, with an Open Anyway button">
+
+3. macOS asks once more. Click **Open Anyway** again and confirm with your
+   password or Touch ID if asked. The installer opens.
+
+   <img src="docs/install-3-confirm.webp" width="300" alt="macOS dialog: Open WebP-AVIF-Quick-Actions.pkg?, with Move to Bin, Open Anyway and Done buttons">
+
+### Or in one line, in Terminal
 
 ```bash
-git clone https://github.com/piotrekbednus/macos-webp-quick-action.git
-cd macos-webp-quick-action
-./install.sh
+curl -fsSL https://raw.githubusercontent.com/piotrekbednus/macos-webp-quick-action/main/quick-install.sh | bash
 ```
 
-`install.sh` offers to run `brew install webp libavif` if the encoders are
-missing, copies both actions to `~/Library/Services` and refreshes Finder's
-menu.
+[quick-install.sh](quick-install.sh) downloads the same installer and runs it
+with macOS's own `installer` command, so the steps above are not needed. It
+asks for your password.
+
+You can also build the installer yourself from this repository (see
+[Building the installer](#building-the-installer)), or use the Homebrew route
+below.
 
 If the actions do not show up, relaunch Finder (Option + right-click the Finder
 icon in the Dock → Relaunch), or turn them on in **System Settings → Keyboard →
@@ -48,7 +73,20 @@ keyboard shortcut.
 The first time you run one on your Desktop or in Downloads, macOS may ask for
 permission to access that folder.
 
-Uninstall with `./uninstall.sh`.
+To uninstall, open `/Library/Application Support/WebP AVIF Quick Actions` in
+Finder (Go → Go to Folder…) and double-click `Uninstall.command`.
+
+### With Homebrew instead
+
+```bash
+git clone https://github.com/piotrekbednus/macos-webp-quick-action.git
+cd macos-webp-quick-action
+./install.sh
+```
+
+`install.sh` offers to run `brew install webp libavif` if the encoders are
+missing, copies both actions to `~/Library/Services` and refreshes Finder's
+menu. Uninstall with `./uninstall.sh`.
 
 ## What you get
 
@@ -87,10 +125,40 @@ The shell scripts live in `src/`. To change them:
 1. Edit `QUALITY` (or anything else) in `src/convert-to-webp.sh` or
    `src/convert-to-avif.sh`.
 2. Run `python3 build.py` to rebuild the bundles in `workflows/`.
-3. Run `./install.sh`.
+3. Run `./install.sh`, or `./packaging/build-pkg.sh` for a new installer.
 
 To change one installed copy without the repo, open it in Automator from
 `~/Library/Services` and edit the script there.
+
+## Building the installer
+
+```bash
+brew install cmake nasm ninja
+./packaging/build-pkg.sh
+```
+
+This compiles `cwebp` and `avifenc` from pinned source releases (libwebp,
+libavif, aom, libpng, libjpeg-turbo, zlib) as universal binaries for Apple
+Silicon and Intel, linked statically so they need nothing outside macOS. Then
+it writes `dist/WebP-AVIF-Quick-Actions.pkg`. The first run takes a few
+minutes. Versions are set at the top of `packaging/build-encoders.sh`, the
+package version in `VERSION`.
+
+The installer puts the actions in `/Library/Services` and the encoders in
+`/Library/Application Support/WebP AVIF Quick Actions`, where the actions look
+for them first. If you installed with `install.sh` before, the installer moves
+those older copies from `~/Library/Services` to the Bin, so the menu does not
+show each action twice.
+
+To sign and notarize it, set `SIGN_APP`, `SIGN_INSTALLER` and `NOTARY_PROFILE`
+(see the comment at the top of `packaging/build-pkg.sh`).
+
+## Support
+
+The actions are free. If they save you a trip to an online converter, you can
+[buy me a coffee](https://buymeacoffee.com/convert_png_to_webp_avif).
+Questions and ideas: [automateyourstuff.com](https://automateyourstuff.com/contact/)
+or a GitHub issue.
 
 ## Made by
 

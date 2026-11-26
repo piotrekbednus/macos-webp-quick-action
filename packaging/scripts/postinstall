@@ -1,0 +1,31 @@
+#!/bin/bash
+# Runs as root after the .pkg has put the files in place.
+user="$(stat -f%Su /dev/console)"
+if [ -n "$user" ] && [ "$user" != root ] && [ "$user" != loginwindow ]; then
+  uid="$(id -u "$user")"
+  # Read as a plist value, not parsed text, so a home path with spaces
+  # ("/Users/Jan Kowalski") stays whole.
+  home="$(dscl -plist . -read "/Users/$user" NFSHomeDirectory 2>/dev/null |
+    plutil -extract "dsAttrTypeStandard:NFSHomeDirectory.0" raw -o - - 2>/dev/null)" || home=""
+  # A copy from install.sh in ~/Library/Services would show up a second time
+  # in the menu. Move it to the Bin rather than delete it: it may have been
+  # edited in Automator.
+  trash="$home/.Trash"
+  if [[ "$home" == /* && -d "$home" ]]; then
+    # Created as the user, so the Bin is not owned by root. Migrate only into a
+    # real directory owned by the user (not a symlink), since this runs as root.
+    [ -e "$trash" ] || [ -L "$trash" ] || sudo -u "$user" mkdir -m 700 "$trash" 2>/dev/null
+    if [ -d "$trash" ] && [ ! -L "$trash" ] && [ "$(stat -f%Su "$trash" 2>/dev/null)" = "$user" ]; then
+      for name in "Convert to WebP.workflow" "Convert to AVIF.workflow"; do
+        old="$home/Library/Services/$name"
+        [ -d "$old" ] || continue
+        dest="$trash/$name"; n=2
+        while [ -e "$dest" ]; do dest="$trash/${name%.workflow} $n.workflow"; n=$((n+1)); done
+        mv "$old" "$dest" 2>/dev/null || true
+      done
+    fi
+  fi
+  # Refresh the Services menu for the logged-in user.
+  launchctl asuser "$uid" sudo -u "$user" /System/Library/CoreServices/pbs -flush 2>/dev/null || true
+fi
+exit 0

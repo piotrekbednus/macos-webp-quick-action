@@ -4,12 +4,14 @@
 
 QUALITY=80   # 0-100. 75-80 matches what online converters produce.
 
-export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+# The installer (.pkg) puts its own encoders here; the install.sh route uses
+# Homebrew's.
+export PATH="/Library/Application Support/WebP AVIF Quick Actions/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 notify() { osascript -e "display notification \"$1\" with title \"Convert to WebP\""; }
 
 if ! command -v cwebp >/dev/null 2>&1; then
-  notify "cwebp not found. Run: brew install webp"
+  notify "cwebp not found. Reinstall from github.com/piotrekbednus/macos-webp-quick-action"
   exit 1
 fi
 
@@ -62,7 +64,8 @@ for f in "$@"; do
   [[ "${f:e:l}" == webp ]] && continue
   out="$(output_for "$f")"
   orient="$(orientation "$f")"
-  if [[ "${f:e:l}" == (png|jpg|jpeg|tif|tiff) && "$orient" == 1 ]]; then
+  # cwebp reads PNG and JPEG itself (the bundled build has no TIFF support).
+  if [[ "${f:e:l}" == (png|jpg|jpeg) && "$orient" == 1 ]]; then
     src="$f"
   else
     # HEIC, GIF, BMP, ... or a rotated photo: let macOS decode it to PNG first.
